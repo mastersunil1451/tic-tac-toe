@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      width: 80%;
+      max-width: 600px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #45a049;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .player-info {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+
+    .player-info input {
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 20px auto;
+      width: 300px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background 0.3s ease;
+    }
+
+    .cell:hover {
+      background: #d1d1d1;
+    }
+
+    .turn-indicator {
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Main Menu -->
+    <div id="mainMenu">
+      <h1>Welcome to Tic Tac Toe</h1>
+      <div class="menu">
+        <button id="playButton" class="btn">Start Game</button>
+        <button id="howToPlayButton" class="btn">How to Play</button>
+      </div>
+    </div>
+
+    <!-- How to Play Section -->
+    <div id="howToPlaySection" class="hidden">
+      <h2>How to Play</h2>
+      <p>1. Enter names for Player 1 (X) and Player 2 (O).</p>
+      <p>2. Click on the grid cells to place your mark.</p>
+      <p>3. The first player to align 3 marks wins.</p>
+      <p>4. Click "Restart" to play again after the game ends.</p>
+      <button id="backToMenuButton" class="btn">Back to Menu</button>
+    </div>
+
+    <!-- Game Section -->
+    <div id="gameSection" class="hidden">
+      <h1>Tic Tac Toe</h1>
+      <div class="player-info">
+        <div>
+          <label for="player1">Player 1 (X):</label>
+          <input type="text" id="player1" placeholder="Enter Name" value="Player 1">
+        </div>
+        <div>
+          <label for="player2">Player 2 (O):</label>
+          <input type="text" id="player2" placeholder="Enter Name" value="Player 2">
+        </div>
+      </div>
+      <div class="turn-indicator">
+        <span id="currentTurn">Player 1's Turn</span>
+      </div>
+      <div class="board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+      </div>
+      <button id="restartButton" class="btn hidden">Restart</button>
+      <button id="backToMenuFromGameButton" class="btn hidden">Back to Menu</button>
+    </div>
+  </div>
+
+  <script>
+    const mainMenu = document.getElementById('mainMenu');
+    const gameSection = document.getElementById('gameSection');
+    const howToPlaySection = document.getElementById('howToPlaySection');
+    const playButton = document.getElementById('playButton');
+    const howToPlayButton = document.getElementById('howToPlayButton');
+    const backToMenuButton = document.getElementById('backToMenuButton');
+    const backToMenuFromGameButton = document.getElementById('backToMenuFromGameButton');
+
+    const board = document.querySelector('.board');
+    const cells = document.querySelectorAll('.cell');
+    const turnIndicator = document.getElementById('currentTurn');
+    const restartButton = document.getElementById('restartButton');
+
+    let currentPlayer = 'X';
+    let player1Name = 'Player 1';
+    let player2Name = 'Player 2';
+    let gameState = ['', '', '', '', '', '', '', '', ''];
+    const winningConditions = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
+    ];
+
+    function updateTurnIndicator() {
+      turnIndicator.textContent = `${currentPlayer === 'X' ? player1Name : player2Name}'s Turn`;
+    }
+
+    function handleCellClick(event) {
+      const cell = event.target;
+      const index = cell.getAttribute('data-index');
+
+      if (gameState[index] || checkWinner()) return;
+
+      gameState[index] = currentPlayer;
+      cell.textContent = currentPlayer;
+      cell.style.color = currentPlayer === 'X' ? '#e74c3c' : '#2980b9';
+
+      if (checkWinner()) {
+        turnIndicator.textContent = `${currentPlayer === 'X' ? player1Name : player2Name} Wins! 🎉`;
+        restartButton.classList.remove('hidden');
+        backToMenuFromGameButton.classList.remove('hidden');
+        return;
+      }
+
+      if (!gameState.includes('')) {
+        turnIndicator.textContent = "It's a Draw!";
+        restartButton.classList.remove('hidden');
+        backToMenuFromGameButton.classList.remove('hidden');
+        return;
+      }
+
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      updateTurnIndicator();
+    }
+
+    function checkWinner() {
+      return winningConditions.some(condition => {
+        return condition.every(index => gameState[index] === currentPlayer);
+      });
+    }
+
+    function restartGame() {
+      gameState = ['', '', '', '', '', '', '', '', ''];
+      currentPlayer = 'X';
+      cells.forEach(cell => {
+        cell.textContent = '';
+        cell.style.color = '';
+      });
+      restartButton.classList.add('hidden');
+      backToMenuFromGameButton.classList.add('hidden');
+      updateTurnIndicator();
+    }
+
+    function showGameSection() {
+      mainMenu.classList.add('hidden');
+      gameSection.classList.remove('hidden');
+      updateTurnIndicator();
+    }
+
+    function showHowToPlay() {
+      mainMenu.classList.add('hidden');
+      howToPlaySection.classList.remove('hidden');
+    }
+
+    function hideHowToPlay() {
+      howToPlaySection.classList.add('hidden');
+      mainMenu.classList.remove('hidden');
+    }
+
+    function backToMenuFromGame() {
+      gameSection.classList.add('hidden');
+      mainMenu.classList.remove('hidden');
+      restartGame();
+    }
+
+    playButton.addEventListener('click', showGameSection);
+    howToPlayButton.addEventListener('click', showHowToPlay);
+    backToMenuButton.addEventListener('click', hideHowToPlay);
+    backToMenuFromGameButton.addEventListener('click', backToMenuFromGame);
+    restartButton.addEventListener('click', restartGame);
+    cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+
+    document.getElementById('player1').addEventListener('input', (e) => {
+      player1Name = e.target.value || 'Player 1';
+      updateTurnIndicator();
+    });
+
+    document.getElementById('player2').addEventListener('input', (e) => {
+      player2Name = e.target.value || 'Player 2';
+      updateTurnIndicator();
+    });
+  </script>
+</body>
+</html>
