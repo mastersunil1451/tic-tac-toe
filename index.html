@@ -29,6 +29,7 @@
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
     }
 
     h1 {
@@ -46,10 +47,11 @@
       background: #4caf50;
       color: #fff;
       border: none;
-      padding: 10px;
+      padding: 12px;
       border-radius: 5px;
       cursor: pointer;
       transition: all 0.3s ease;
+      font-size: 1rem;
     }
 
     .btn:hover {
@@ -64,10 +66,16 @@
       display: flex;
       justify-content: space-around;
       margin-bottom: 20px;
+      gap: 20px;
+    }
+
+    .player-info div {
+      flex: 1;
     }
 
     .player-info input {
-      padding: 5px;
+      width: 100%;
+      padding: 8px;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
@@ -77,12 +85,12 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
       margin: 20px auto;
-      width: 300px;
+      width: 100%;
+      max-width: 300px;
     }
 
     .cell {
-      width: 100px;
-      height: 100px;
+      aspect-ratio: 1;
       background: #e0e0e0;
       display: flex;
       justify-content: center;
@@ -92,6 +100,7 @@
       cursor: pointer;
       border-radius: 5px;
       transition: background 0.3s ease;
+      min-width: 0;
     }
 
     .cell:hover {
@@ -103,9 +112,48 @@
       font-size: 1.2rem;
       font-weight: bold;
     }
+
+    /* Responsive styles */
+    @media (max-width: 600px) {
+      .container {
+        width: 95%;
+        padding: 15px;
+      }
+
+      .player-info {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .player-info div {
+        width: 100%;
+      }
+
+      .player-info input {
+        margin: 5px 0;
+      }
+
+      .board {
+        max-width: 100%;
+      }
+
+      .cell {
+        font-size: 1.5rem;
+      }
+
+      .turn-indicator {
+        font-size: 1rem;
+      }
+
+      .btn {
+        padding: 10px;
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- Remaining HTML structure remains the same as original -->
   <div class="container">
     <!-- Main Menu -->
     <div id="mainMenu">
@@ -159,6 +207,7 @@
   </div>
 
   <script>
+    // JavaScript code remains the same as original
     const mainMenu = document.getElementById('mainMenu');
     const gameSection = document.getElementById('gameSection');
     const howToPlaySection = document.getElementById('howToPlaySection');
