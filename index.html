@@ -24,7 +24,7 @@
     .container {
       text-align: center;
       width: 80%;
-      max-width: 600px;
+      max-width: 400px;
       background: #fff;
       padding: 20px;
       border-radius: 10px;
@@ -150,6 +150,31 @@
         font-size: 0.9rem;
       }
     }
+    #ad-overlay {
+      height: 290px;
+      width: 300px;
+      position: absolute;
+      background-color: rgb(170, 167, 167);
+      margin: auto;
+      display: none;
+
+      #close-start-btn {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 20px;
+        aspect-ratio: 1/1;
+      }
+
+      p {
+        color: #000000;
+        font-size: 13px;
+        position: absolute;
+        bottom: 0px;
+        left: 0;
+        padding: 5px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -205,6 +230,21 @@
       <button id="backToMenuFromGameButton" class="btn hidden">Back to Menu</button>
     </div>
   </div>
+  <div id="ad-overlay">
+    <button id="close-start-btn">X</button>
+    <p>Visiting this small ad helps us to grow and update. Thanks for your support! 💖</p>
+    <!-- Adsterra Ads Code -->
+    <script type="text/javascript">
+      atOptions = {
+        'key' : '15cd165eb5c6f2b40807bacca76d739c',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/15cd165eb5c6f2b40807bacca76d739c/invoke.js"></script>
+  </div>
 
   <script>
     // JavaScript code remains the same as original
@@ -220,6 +260,8 @@
     const cells = document.querySelectorAll('.cell');
     const turnIndicator = document.getElementById('currentTurn');
     const restartButton = document.getElementById('restartButton');
+    const adOverlay = document.getElementById('ad-overlay');
+    const closeBtn = document.getElementById('close-start-btn');                      4
 
     let currentPlayer = 'X';
     let player1Name = 'Player 1';
@@ -270,6 +312,19 @@
     }
 
     function restartGame() {
+      // gameState = ['', '', '', '', '', '', '', '', ''];
+      // currentPlayer = 'X';
+      // cells.forEach(cell => {
+      //   cell.textContent = '';
+      //   cell.style.color = '';
+      // });
+      // restartButton.classList.add('hidden');
+      // backToMenuFromGameButton.classList.add('hidden');
+      // updateTurnIndicator();
+      adOverlay.style.display = 'block';
+    }
+
+    function realRestartGame() {
       gameState = ['', '', '', '', '', '', '', '', ''];
       currentPlayer = 'X';
       cells.forEach(cell => {
@@ -279,6 +334,7 @@
       restartButton.classList.add('hidden');
       backToMenuFromGameButton.classList.add('hidden');
       updateTurnIndicator();
+      adOverlay.style.display = 'none';
     }
 
     function showGameSection() {
@@ -308,6 +364,7 @@
     backToMenuButton.addEventListener('click', hideHowToPlay);
     backToMenuFromGameButton.addEventListener('click', backToMenuFromGame);
     restartButton.addEventListener('click', restartGame);
+    closeBtn.addEventListener('click', realRestartGame);
     cells.forEach(cell => cell.addEventListener('click', handleCellClick));
 
     document.getElementById('player1').addEventListener('input', (e) => {
